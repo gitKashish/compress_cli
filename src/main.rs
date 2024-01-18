@@ -3,7 +3,7 @@ extern crate flate2;
 use flate2::{write::GzEncoder,
             Compression};
 use std::{env::args,
-        fs::File,
+        fs::{File,metadata},
         time::Instant};
 use std::io::{copy, BufReader};
 
@@ -14,6 +14,11 @@ fn main() {
     }
     let source_path = args().nth(1).unwrap();
     let target_path = args().nth(2).unwrap();
+    let md = metadata(source_path.clone()).unwrap();
+    if md.is_dir() {
+        eprintln!("Error: Source path is a directory");
+        return;
+    }
     
     let source_file = File::open(source_path);
     let source_file = match source_file {
